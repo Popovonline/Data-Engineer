@@ -83,6 +83,28 @@ where   trim(t.token) != '';
 
 	/* Drop table of studio_film*/
 drop table studio_film;
+
+-- !!!!! Bridge Table - films_studios_bridge !!!!!
+
+create table films_studios_bridge (
+	id_film integer not null references films(id),
+	id_studio integer not null references studio(id_studio)
+);
+
+insert into films_studios_bridge (id_film, id_studio) 
+with t as (
+	select distinct id as film_key, 
+	unnest(string_to_array(studio, ', ')) as studio_name
+	from films_raw
+)
+select f.id, s.id_studio
+from t
+join films f on f.film_key = t.film_key
+join studio s on s.name_studio = t.studio_name;
+
+select * from films_studios_bridge;
+
+drop table films_studios_bridge;
 __________________________________________________________________________________________________
 
 	/* Create table of director*/
@@ -119,6 +141,28 @@ inner join director d on d.name_director  =  trim(t.token) ;
 
 	/* Drop table of director*/
 drop table director_film;
+
+-- !!!!! Bridge Table - films_directors_bridge !!!!!
+
+create table films_directors_bridge (
+	id_film integer not null references films(id),
+	id_director integer not null references director (id_director)
+);
+
+insert into films_directors_bridge (id_film, id_director)
+with t as  (
+	select distinct id AS film_key, 
+	unnest(string_to_array(director, ', ')) as name_director
+	FROM films_raw
+)
+select f.id, d.id_director
+from t
+join films f on f.film_key = t.film_key
+join director d on d.name_director = t.name_director;
+
+select * from films_directors_bridge;
+
+drop table films_directors_bridge;
 __________________________________________________________________________________________________
 
 	/* Create table of author*/
