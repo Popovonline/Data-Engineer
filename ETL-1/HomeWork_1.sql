@@ -153,7 +153,7 @@ insert into films_directors_bridge (id_film, id_director)
 with t as  (
 	select distinct id AS film_key, 
 	unnest(string_to_array(director, ', ')) as name_director
-	FROM films_raw
+	from films_raw
 )
 select f.id, d.id_director
 from t
